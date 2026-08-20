@@ -15,26 +15,106 @@ document.addEventListener('DOMContentLoaded', () => {
         if (letterRecipientElem) letterRecipientElem.textContent = `${customName}, mi amor,`;
     }
 
-    // --- 2. SINTETIZADOR DE MÚSICA ROMÁNTICA (Web Audio API) ---
-    // Garantiza música funcional y romántica sin depender de archivos de audio externos.
+    // --- 2. GESTOR DE MÚSICA HÍBRIDO (MP3 Local + Respaldos Sintetizados) ---
+    class AudioController {
+        constructor() {
+            this.audioElem = document.getElementById('bg-music');
+            this.synth = new RomanticMusicSynth();
+            this.useMP3 = false;
+            this.isPlaying = false;
+        }
+
+        async start() {
+            if (this.isPlaying) return;
+
+            // Intentar reproducir archivo MP3 si existe y está configurado
+            if (this.audioElem && this.audioElem.src && !this.audioElem.src.endsWith('.mp3#none')) {
+                try {
+                    await this.audioElem.play();
+                    this.useMP3 = true;
+                    this.isPlaying = true;
+                    return;
+                } catch (err) {
+                    console.log("No se pudo cargar/reproducir MP3 local, usando melodia sintetizada de respaldo...", err);
+                }
+            }
+
+            // Si falla el MP3 o no hay archivo, usar el sintetizador melódico romántico
+            this.useMP3 = false;
+            this.synth.start();
+            this.isPlaying = true;
+        }
+
+        stop() {
+            this.isPlaying = false;
+            if (this.useMP3 && this.audioElem) {
+                this.audioElem.pause();
+            } else {
+                this.synth.stop();
+            }
+        }
+
+        toggle() {
+            if (this.isPlaying) {
+                this.stop();
+            } else {
+                this.start();
+            }
+            return this.isPlaying;
+        }
+    }
+
+    // Sintetizador Polifónico Maestro 6/8: "Perfect" de Ed Sheeran
     class RomanticMusicSynth {
         constructor() {
             this.ctx = null;
             this.isPlaying = false;
             this.timer = null;
-            this.currentNoteIndex = 0;
-            
-            // Progresión romántica de caja de música (Cánon / Balada suave)
-            this.notes = [
-                { note: 'C5', dur: 0.5 }, { note: 'G4', dur: 0.5 }, { note: 'A4', dur: 0.5 }, { note: 'E4', dur: 0.5 },
-                { note: 'F4', dur: 0.5 }, { note: 'C4', dur: 0.5 }, { note: 'F4', dur: 0.5 }, { note: 'G4', dur: 0.5 },
-                { note: 'E5', dur: 0.5 }, { note: 'B4', dur: 0.5 }, { note: 'C5', dur: 0.5 }, { note: 'G4', dur: 0.5 },
-                { note: 'A4', dur: 0.5 }, { note: 'E4', dur: 0.5 }, { note: 'F4', dur: 0.5 }, { note: 'G4', dur: 0.5 }
-            ];
+            this.tick = 0;
 
             this.freqMap = {
-                'C4': 261.63, 'D4': 293.66, 'E4': 329.63, 'F4': 349.23, 'G4': 392.00, 'A4': 440.00, 'B4': 493.88,
-                'C5': 523.25, 'D5': 587.33, 'E5': 659.25, 'F5': 698.46, 'G5': 783.99, 'A5': 880.00
+                'G2': 98.00, 'B2': 123.47, 'C3': 130.81, 'D3': 146.83, 'E3': 164.81, 'G3': 196.00, 'A3': 220.00, 'B3': 246.94,
+                'C4': 261.63, 'D4': 293.66, 'E4': 329.63, 'F#4': 369.99, 'G4': 392.00, 'A4': 440.00, 'B4': 493.88,
+                'C5': 523.25, 'D5': 587.33, 'E5': 659.25, 'F#5': 739.99, 'G5': 783.99
+            };
+
+            // Punteo de Guitarra Acústica 6/8 (Compás 6/8: G -> Em -> C -> D)
+            this.arpeggioPattern = [
+                // G Major (2 compases = 12 corcheas)
+                'G2', 'D3', 'G3', 'B3', 'G3', 'D3',  'G2', 'D3', 'G3', 'B3', 'G3', 'D3',
+                // E Minor (2 compases = 12 corcheas)
+                'E3', 'B3', 'E4', 'G4', 'E4', 'B3',  'E3', 'B3', 'E4', 'G4', 'E4', 'B3',
+                // C Major (2 compases = 12 corcheas)
+                'C3', 'G3', 'C4', 'E4', 'C4', 'G3',  'C3', 'G3', 'C4', 'E4', 'C4', 'G3',
+                // D Major (2 compases = 12 corcheas)
+                'D3', 'A3', 'D4', 'F#4', 'D4', 'A3', 'D3', 'A3', 'D4', 'F#4', 'D4', 'A3'
+            ];
+
+            // Mapa de voz de Ed Sheeran sincronizado por corcheas exactas (Tick 0 a 95)
+            this.vocalRhythmMap = {
+                // Verso 1: "I found a love... for me..."
+                6: 'D4', 7: 'G4', 8: 'A4', 9: 'B4',
+                12: 'B4', 13: 'A4', 14: 'G4', 15: 'E4',
+                // "Darling, just dive right in, follow my lead..."
+                18: 'D4', 19: 'G4', 20: 'A4', 21: 'B4', 22: 'B4', 23: 'A4', 24: 'G4',
+                25: 'G4', 26: 'A4', 27: 'B4', 28: 'G4', 29: 'D4',
+                // "Well I found a girl... beautiful and sweet..."
+                30: 'D4', 31: 'G4', 32: 'A4', 33: 'B4',
+                34: 'B4', 35: 'A4', 36: 'G4', 37: 'E4',
+                // "I never knew you were the someone waiting for me..."
+                38: 'E4', 39: 'G4', 40: 'A4', 41: 'B4', 42: 'B4', 43: 'A4', 44: 'G4', 45: 'F#4', 46: 'G4',
+
+                // Coro: "Baby, I'm dancing in the dark..."
+                48: 'D5', 49: 'D5', 50: 'D5', 51: 'C5', 52: 'B4', 53: 'G4',
+                // "...with you between my arms..."
+                54: 'D5', 55: 'D5', 56: 'D5', 57: 'C5', 58: 'B4', 59: 'A4', 60: 'G4',
+                // "Barefoot on the grass... listening to our favorite song..."
+                62: 'D5', 63: 'D5', 64: 'D5', 65: 'C5', 66: 'B4', 67: 'G4',
+                68: 'C5', 69: 'B4', 70: 'A4', 71: 'G4', 72: 'A4', 73: 'B4', 74: 'A4', 75: 'G4',
+                // "When you said you looked a mess... I whispered underneath my breath..."
+                77: 'G4', 78: 'B4', 79: 'D5', 80: 'D5', 81: 'E5', 82: 'D5', 83: 'B4', 84: 'A4', 85: 'G4',
+                // "But you heard it, darling... you look perfect tonight..."
+                87: 'D5', 88: 'E5', 89: 'D5', 90: 'B4', 91: 'A4', 92: 'G4', 93: 'A4', 94: 'G4'
             };
         }
 
@@ -48,76 +128,115 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        playNote(freq, duration) {
-            if (!this.ctx) return;
+        // Tono de punteo de guitarra acústica cálida
+        playGuitarPluck(freq) {
+            if (!this.ctx || !freq) return;
+            const now = this.ctx.currentTime;
+            
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            const filter = this.ctx.createBiquadFilter();
+
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, now);
+
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(freq * 3.2, now);
+            filter.frequency.exponentialRampToValueAtTime(freq * 0.8, now + 0.5);
+
+            gain.gain.setValueAtTime(0.001, now);
+            gain.gain.linearRampToValueAtTime(0.1, now + 0.015);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.55);
+
+            osc.connect(filter);
+            filter.connect(gain);
+            gain.connect(this.ctx.destination);
+
+            osc.start(now);
+            osc.stop(now + 0.6);
+        }
+
+        // Tono de voz cantada brillante de Ed Sheeran
+        playVocalNote(freq) {
+            if (!this.ctx || !freq) return;
+            const now = this.ctx.currentTime;
 
             const osc = this.ctx.createOscillator();
             const gain = this.ctx.createGain();
+            const filter = this.ctx.createBiquadFilter();
 
-            // Sonido suave estilo campana/caja de música
             osc.type = 'sine';
-            osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+            osc.frequency.setValueAtTime(freq, now);
+            
+            // Vibrato ligero de voz
+            osc.frequency.linearRampToValueAtTime(freq * 1.003, now + 0.2);
+            osc.frequency.linearRampToValueAtTime(freq, now + 0.4);
 
-            gain.gain.setValueAtTime(0.01, this.ctx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.18, this.ctx.currentTime + 0.05);
-            gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration + 0.4);
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(1600, now);
 
-            osc.connect(gain);
+            gain.gain.setValueAtTime(0.001, now);
+            gain.gain.linearRampToValueAtTime(0.24, now + 0.04);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.5);
+
+            osc.connect(filter);
+            filter.connect(gain);
             gain.connect(this.ctx.destination);
 
-            osc.start();
-            osc.stop(this.ctx.currentTime + duration + 0.5);
+            osc.start(now);
+            osc.stop(now + 0.55);
         }
 
         start() {
             this.init();
             if (this.isPlaying) return;
             this.isPlaying = true;
+            this.tick = 0;
 
-            const loop = () => {
+            const totalTicks = 96; // 96 corcheas = 16 compases completos en 6/8
+            const tickDurationMs = 310; // 63 BPM en tiempo 6/8 (Perfect)
+
+            const masterClock = () => {
                 if (!this.isPlaying) return;
-                const current = this.notes[this.currentNoteIndex];
-                const freq = this.freqMap[current.note];
-                
-                if (freq) {
-                    this.playNote(freq, current.dur);
+
+                // 1. Tocar acorde de guitarra 6/8 (Compás en fondo)
+                const guitarNote = this.arpeggioPattern[this.tick % 48];
+                const guitarFreq = this.freqMap[guitarNote];
+                this.playGuitarPluck(guitarFreq);
+
+                // 2. Tocar nota vocal de Ed Sheeran si corresponde en este tick exacto
+                const vocalNote = this.vocalRhythmMap[this.tick % totalTicks];
+                if (vocalNote) {
+                    const vocalFreq = this.freqMap[vocalNote];
+                    this.playVocalNote(vocalFreq);
                 }
 
-                this.currentNoteIndex = (this.currentNoteIndex + 1) % this.notes.length;
-                this.timer = setTimeout(loop, current.dur * 600);
+                this.tick++;
+                this.timer = setTimeout(masterClock, tickDurationMs);
             };
 
-            loop();
+            masterClock();
         }
 
         stop() {
             this.isPlaying = false;
             if (this.timer) clearTimeout(this.timer);
         }
-
-        toggle() {
-            if (this.isPlaying) {
-                this.stop();
-            } else {
-                this.start();
-            }
-            return this.isPlaying;
-        }
     }
 
-    const romanticAudio = new RomanticMusicSynth();
+    const romanticAudio = new AudioController();
     const musicBtn = document.getElementById('music-control');
     const musicText = document.getElementById('music-text');
 
     if (musicBtn) {
-        musicBtn.addEventListener('click', () => {
+        musicBtn.addEventListener('click', async () => {
             const playing = romanticAudio.toggle();
             if (playing) {
                 musicBtn.classList.add('playing');
-                musicText.textContent = "Música ON";
+                if (musicText) musicText.textContent = "Música ON";
             } else {
                 musicBtn.classList.remove('playing');
-                musicText.textContent = "Música OFF";
+                if (musicText) musicText.textContent = "Música OFF";
             }
         });
     }
