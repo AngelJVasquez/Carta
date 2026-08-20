@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Una Propuesta Especial | Para Ti ❤️</title>
+    <meta name="description" content="Un mensaje especial de amor y una propuesta inolvidable hecha con todo el corazón.">
+    <meta name="theme-color" content="#2c1620">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Cinzel:wght@500;700&family=Poppins:wght@300;400;500;600;700&family=Great+Vibes&display=swap" rel="stylesheet">
+    
+    <!-- CSS Styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Canvas para Partículas y Fuegos Artificiales -->
+    <canvas id="particles-canvas"></canvas>
+    
+    <!-- Control de Música Flotante -->
+    <div id="music-control" class="music-control-btn" title="Controlar Música">
+        <div class="music-icon">
+            <span class="bar bar1"></span>
+            <span class="bar bar2"></span>
+            <span class="bar bar3"></span>
+        </div>
+        <span id="music-text" class="music-label">Música</span>
+    </div>
+
+    <!-- Envoltorio Principal Mobile Responsive -->
+    <main class="app-container">
+
+        <!-- ETAPA 1: EL SOBRE DE CARTA CERRADO -->
+        <section id="envelope-stage" class="envelope-stage">
+            <div class="stage-header">
+                <span class="sub-tag">✨ Un detalle del corazón ✨</span>
+                <h1 class="main-title">Tengo una carta especial para ti</h1>
+                <p id="recipient-name" class="recipient-name">Para el amor de mi vida</p>
+            </div>
+
+            <div class="envelope-wrapper">
+                <div id="envelope" class="envelope">
+                    <div class="envelope-back"></div>
+                    <div class="letter-preview">
+                        <div class="letter-preview-content">
+                            <span class="heart-watermark">❤️</span>
+                            <p class="preview-text">Haz clic en el sello para leer mi corazón...</p>
+                        </div>
+                    </div>
+                    <div class="envelope-front"></div>
+                    <div class="envelope-top-flap" id="envelope-flap"></div>
+                    
+                    <!-- Sello de Lacre Interactivo -->
+                    <button id="wax-seal" class="wax-seal" aria-label="Abrir carta">
+                        <div class="seal-inner">
+                            <span class="seal-heart">💍</span>
+                            <span class="seal-text">ABRIR</span>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <div class="tap-hint">
+                <span class="pointer-icon">👆</span>
+                <p>Presiona el sello para abrir con música y amor</p>
+            </div>
+        </section>
+
+        <!-- ETAPA 2: CONTENIDO DE LA CARTA Y PROPUESTA -->
+        <section id="letter-stage" class="letter-stage hidden">
+            
+            <!-- Encabezado de la Carta Desplegada -->
+            <header class="letter-header">
+                <div class="romantic-badge">🌹 Carta de Amor</div>
+                <h2 id="letter-recipient" class="letter-salutation">Mi Amor Querido,</h2>
+                <div class="divider-rose">
+                    <span>❖</span><hr><span>❤️</span><hr><span>❖</span>
+                </div>
+            </header>
+
+            <!-- Cuerpo de la Carta -->
+            <article class="letter-paper">
+                <div class="paper-texture"></div>
+                <div class="letter-content">
+                    <p class="paragraph fade-in-text">
+                        Desde el momento en que llegaste a mi vida, todo cobró un sentido más brillante y hermoso. Tu sonrisa tiene el poder mágico de iluminar mis días más oscuros y tu compañía es el refugio más cálido que he conocido.
+                    </p>
+                    
+                    <div class="romantic-quote-box">
+                        <span class="quote-mark">“</span>
+                        <p>De todas las historias de amor del mundo, la nuestra es y siempre será mi favorita.</p>
+                    </div>
+
+                    <p class="paragraph fade-in-text">
+                        Hemos compartido risas inolvidables, abrazos en momentos difíciles, miradas que lo dicen todo y sueños que poco a poco hemos ido construyendo juntos. Hoy me doy cuenta de que no imagino mi futuro sin ti. Quiero estar a tu lado en cada amanecer, apoyarte en cada meta y amar cada detalle de quien eres.
+                    </p>
+                </div>
+            </article>
+
+            <!-- Sección de Galería de Recuerdos / Línea de Tiempo -->
+            <section class="memory-timeline">
+                <h3 class="section-subtitle">Nuestra Historia en Momentos 📸</h3>
+                
+                <div class="cards-grid">
+                    <div class="memory-card">
+                        <div class="card-img-wrapper">
+                            <img src="assets/images/sunset.png" alt="Nuestra mirada" loading="lazy">
+                            <span class="card-tag">El Comienzo</span>
+                        </div>
+                        <div class="card-body">
+                            <h4>El día que todo cambió</h4>
+                            <p>Cuando descubrí que en tus ojos podía encontrar el lugar al que siempre pertenecería.</p>
+                        </div>
+                    </div>
+
+                    <div class="memory-card">
+                        <div class="card-img-wrapper">
+                            <img src="assets/images/starlight.png" alt="Nuestros sueños" loading="lazy">
+                            <span class="card-tag">Nuestra Aventura</span>
+                        </div>
+                        <div class="card-body">
+                            <h4>Infinidad de recuerdos</h4>
+                            <p>Cada risa, viaje y conversación hasta altas horas de la noche fortaleció nuestro amor.</p>
+                        </div>
+                    </div>
+
+                    <div class="memory-card">
+                        <div class="card-img-wrapper">
+                            <img src="assets/images/ring.png" alt="Nuestro futuro" loading="lazy">
+                            <span class="card-tag">El Presente</span>
+                        </div>
+                        <div class="card-body">
+                            <h4>El comienzo del siempre</h4>
+                            <p>Todo lo vivido me trajo a la certeza absoluta de que quiero recorrer la vida contigo.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECCIÓN CÚSPIDE: LA PROPUESTA DE MATRIMONIO -->
+            <section id="proposal-section" class="proposal-card">
+                <div class="proposal-sparkles">✨ ✨ ✨</div>
+                <span class="ring-icon-big">💍</span>
+                <h2 class="proposal-title">Tengo una pregunta para ti...</h2>
+                <p class="proposal-subtitle">¿Me harías el honor más grande del mundo?</p>
+
+                <div class="proposal-question-box">
+                    <h3 class="big-question">¿Te gustaría casarte conmigo?</h3>
+                    <p class="proposal-description">Y escribir el resto de nuestras vidas juntos, mano a mano, para siempre.</p>
+                </div>
+
+                <!-- Botones de Respuesta Interactivos -->
+                <div class="interactive-buttons" id="buttons-container">
+                    <button id="btn-yes" class="btn-yes">
+                        <span class="btn-icon">❤️</span>
+                        <span class="btn-text">¡SÍ, ACEPTO!</span>
+                        <span class="btn-sparkle">✨</span>
+                    </button>
+                    
+                    <button id="btn-no" class="btn-no">
+                        <span class="btn-text">Déjame pensarlo...</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Pie de página romántico -->
+            <footer class="letter-footer">
+                <p>Hecho con todo mi amor eterno ❤️</p>
+            </footer>
+        </section>
+
+    </main>
+
+    <!-- MODAL DE CELEBRACIÓN (Al hacer clic en SÍ) -->
+    <div id="celebration-modal" class="modal-overlay hidden">
+        <div class="modal-card">
+            <button id="close-modal" class="modal-close-btn">&times;</button>
+            
+            <div class="modal-header-icon">🎉 💍 💖</div>
+            <span class="celebration-badge">¡DIJO QUE SÍ!</span>
+            <h2 class="celebration-title">¡Nos casamos, mi amor!</h2>
+            
+            <div class="celebration-image-container">
+                <img src="assets/images/ring.png" alt="Anillo de compromiso" class="celebration-img">
+            </div>
+
+            <p class="celebration-message">
+                ¡Gracias por hacerme la persona más feliz del universo entero! Prometo cuidarte, respetarte y amarte incondicionalmente cada día de nuestras vidas.
+            </p>
+
+            <div class="modal-actions">
+                <a id="whatsapp-btn" href="#" target="_blank" class="btn-whatsapp">
+                    <span>📱 Enviarme la respuesta por WhatsApp</span>
+                </a>
+                <button id="replay-btn" class="btn-secondary">
+                    <span>✨ Volver a leer la carta</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS Scripts -->
+    <script src="script.js"></script>
+</body>
+</html>
